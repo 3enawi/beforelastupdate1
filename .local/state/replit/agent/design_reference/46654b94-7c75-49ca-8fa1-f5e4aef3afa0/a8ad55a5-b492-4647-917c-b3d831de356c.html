@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة متجر لاروزا - LAROZA Store Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            }
+        }
+    };
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background: hsl(210 40% 96%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(347 77% 38%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 47.4% 11.2%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(160 84% 39%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(215 20.2% 65.1%);
+            --radius: 0.5rem;
+            --font-sans: 'Cairo', 'Inter', system-ui, sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--background);
+            color: var(--foreground);
+        }
+        
+        .sidebar-active {
+            background: var(--accent);
+            color: var(--accent-foreground);
+        }
+        
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground">
+    <!-- @COMPONENT: Layout [Main application layout with sidebar and header] -->
+    <div class="min-h-screen flex">
+        <!-- Sidebar Navigation -->
+        <nav class="w-64 bg-card border-l border-border shadow-lg">
+            <div class="p-6 border-b border-border">
+                <!-- Logo and Brand -->
+                <div class="flex items-center gap-3 mb-2">
+                    <!-- LAROZA Logo placeholder -->
+                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gem text-primary-foreground text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-primary">لاروزا</h1>
+                        <p class="text-sm text-muted-foreground">LAROZA</p>
+                    </div>
+                </div>
+                <p class="text-xs text-muted-foreground">نظام إدارة المتجر الداخلي</p>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <div class="p-4 space-y-2">
+                <a href="#dashboard" class="sidebar-active flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a href="#inventory" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors">
+                    <i class="fas fa-boxes w-5"></i>
+                    <span>إدارة المخزون</span>
+                </a>
+                <a href="#sales" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors">
+                    <i class="fas fa-cash-register w-5"></i>
+                    <span>المبيعات</span>
+                </a>
+                <a href="#returns" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors">
+                    <i class="fas fa-undo-alt w-5"></i>
+                    <span>المرتجعات</span>
+                </a>
+                <a href="#accounting" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span>المحاسبة</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-card border-b border-border shadow-sm">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div>
+                        <h2 class="text-2xl font-bold">لوحة التحكم الرئيسية</h2>
+                        <p class="text-muted-foreground">مرحباً بك في نظام إدارة متجر لاروزا</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-muted-foreground" data-mock="true">
+                            اليوم: 15 يناير 2024
+                        </span>
+                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-primary-foreground"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="p-6 overflow-y-auto h-full">
+                <!-- Quick Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">إجمالي المنتجات</p>
+                                <p class="text-3xl font-bold text-primary" data-mock="true">127</p>
+                            </div>
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-boxes text-primary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">مبيعات اليوم</p>
+                                <p class="text-3xl font-bold text-accent" data-mock="true">2,450</p>
+                                <p class="text-xs text-muted-foreground">درهم إماراتي</p>
+                            </div>
+                            <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-accent text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">مخزون منخفض</p>
+                                <p class="text-3xl font-bold text-destructive" data-mock="true">8</p>
+                                <p class="text-xs text-muted-foreground">منتج يحتاج تجديد</p>
+                            </div>
+                            <div class="w-12 h-12 bg-destructive/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-destructive text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">المرتجعات</p>
+                                <p class="text-3xl font-bold text-muted-foreground" data-mock="true">3</p>
+                                <p class="text-xs text-muted-foreground">هذا الأسبوع</p>
+                            </div>
+                            <div class="w-12 h-12 bg-muted/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-undo-alt text-muted-foreground text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold mb-4">الإجراءات السريعة</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button class="bg-primary text-primary-foreground p-4 rounded-lg hover:bg-primary/90 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-plus text-xl"></i>
+                                <span class="font-medium">إضافة منتج جديد</span>
+                            </div>
+                        </button>
+                        <button class="bg-accent text-accent-foreground p-4 rounded-lg hover:bg-accent/90 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-cash-register text-xl"></i>
+                                <span class="font-medium">تسجيل بيع جديد</span>
+                            </div>
+                        </button>
+                        <button class="bg-secondary text-secondary-foreground p-4 rounded-lg hover:bg-secondary/80 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-undo-alt text-xl"></i>
+                                <span class="font-medium">تسجيل مرتجع</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Inventory Table -->
+                <!-- @COMPONENT: ProductTable [Main products listing with search and filters] -->
+                <div class="bg-card rounded-lg border border-border shadow-sm">
+                    <div class="p-6 border-b border-border">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold">جدول المخزون</h3>
+                            <div class="flex items-center space-x-4 space-x-reverse">
+                                <input 
+                                    type="text" 
+                                    placeholder="البحث في المنتجات..." 
+                                    class="px-4 py-2 border border-input rounded-md bg-background text-sm w-64"
+                                    data-testid="input-search-products"
+                                >
+                                <select class="px-4 py-2 border border-input rounded-md bg-background text-sm w-40" data-testid="select-status-filter">
+                                    <option value="all">جميع المنتجات</option>
+                                    <option value="in-stock">متوفر</option>
+                                    <option value="low-stock">مخزون قليل</option>
+                                    <option value="out-of-stock">نفذ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-muted/30">
+                                <tr>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">الموديل</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">الشركة</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">النوع</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">سعر المتجر</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">سعر الأونلاين</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">الحالة</th>
+                                    <th class="text-right p-4 text-sm font-medium text-muted-foreground">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: products.map(product => ( -->
+                                <tr class="border-t border-border hover:bg-muted/30 transition-colors" data-mock="true">
+                                    <td class="p-4 text-sm" data-testid="cell-model-1">DRS-001</td>
+                                    <td class="p-4 text-sm" data-testid="cell-company-1">أزياء العصر</td>
+                                    <td class="p-4 text-sm" data-testid="cell-type-1">فستان سهرة</td>
+                                    <td class="p-4 text-sm" data-testid="cell-store-price-1">450 درهم</td>
+                                    <td class="p-4 text-sm" data-testid="cell-online-price-1">420 درهم</td>
+                                    <td class="p-4 text-sm" data-testid="cell-status-1">
+                                        <span class="status-badge bg-accent text-accent-foreground rounded-full">متوفر</span>
+                                    </td>
+                                    <td class="p-4 text-sm">
+                                        <div class="flex items-center space-x-2 space-x-reverse">
+                                            <button class="p-2 hover:bg-muted rounded-md text-primary" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-muted-foreground" title="عرض التفاصيل">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-destructive" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t border-border hover:bg-muted/30 transition-colors" data-mock="true">
+                                    <td class="p-4 text-sm">HJB-205</td>
+                                    <td class="p-4 text-sm">حجاب الأناقة</td>
+                                    <td class="p-4 text-sm">حجاب</td>
+                                    <td class="p-4 text-sm">85 درهم</td>
+                                    <td class="p-4 text-sm">75 درهم</td>
+                                    <td class="p-4 text-sm">
+                                        <span class="status-badge bg-secondary text-secondary-foreground rounded-full">مخزون قليل</span>
+                                    </td>
+                                    <td class="p-4 text-sm">
+                                        <div class="flex items-center space-x-2 space-x-reverse">
+                                            <button class="p-2 hover:bg-muted rounded-md text-primary" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-muted-foreground" title="عرض التفاصيل">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-destructive" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t border-border hover:bg-muted/30 transition-colors" data-mock="true">
+                                    <td class="p-4 text-sm">ABY-150</td>
+                                    <td class="p-4 text-sm">عباية الفخامة</td>
+                                    <td class="p-4 text-sm">عباية</td>
+                                    <td class="p-4 text-sm">320 درهم</td>
+                                    <td class="p-4 text-sm">290 درهم</td>
+                                    <td class="p-4 text-sm">
+                                        <span class="status-badge bg-destructive text-destructive-foreground rounded-full">نفذ</span>
+                                    </td>
+                                    <td class="p-4 text-sm">
+                                        <div class="flex items-center space-x-2 space-x-reverse">
+                                            <button class="p-2 hover:bg-muted rounded-md text-primary" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-muted-foreground" title="عرض التفاصيل">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-md text-destructive" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: Layout -->
+
+    <!-- Modal: Add Product -->
+    <!-- @COMPONENT: AddProductModal [Modal for adding new products with color/size inventory] -->
+    <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-card rounded-lg border border-border shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-auto">
+            <div class="p-6 border-b border-border">
+                <h3 class="text-xl font-bold">إضافة منتج جديد</h3>
+            </div>
+            
+            <form class="p-6 space-y-6">
+                <!-- Basic Product Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">رقم الموديل <span class="text-destructive">*</span></label>
+                        <input 
+                            type="text" 
+                            placeholder="مثال: DRS-001" 
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-model-number"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">اسم الشركة <span class="text-destructive">*</span></label>
+                        <input 
+                            type="text" 
+                            placeholder="مثال: شركة الأزياء الراقية" 
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-company-name"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">نوع المنتج <span class="text-destructive">*</span></label>
+                        <select class="w-full px-4 py-2 border border-input rounded-md bg-background" data-testid="select-product-type">
+                            <option value="">اختر نوع المنتج</option>
+                            <option value="dress">فستان</option>
+                            <option value="evening-wear">فستان سهرة</option>
+                            <option value="hijab">حجاب</option>
+                            <option value="abaya">عباية</option>
+                            <option value="accessories">إكسسوارات</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">رابط الصورة</label>
+                        <input 
+                            type="url" 
+                            placeholder="https://example.com/image.jpg" 
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-image-url"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">سعر المتجر (درهم) <span class="text-destructive">*</span></label>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            placeholder="0.00" 
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-store-price"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">سعر الأونلاين (درهم) <span class="text-destructive">*</span></label>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            placeholder="0.00" 
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-online-price"
+                            required
+                        >
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">مواصفات المنتج</label>
+                    <textarea 
+                        placeholder="وصف تفصيلي للمنتج..." 
+                        rows="3" 
+                        class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                        data-testid="textarea-specifications"
+                    ></textarea>
+                </div>
+
+                <!-- Color & Size Management -->
+                <!-- @COMPONENT: ColorSizeManager [Manages product colors and sizes with inventory] -->
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-lg font-semibold">إدارة الألوان والمقاسات</h4>
+                        <div class="flex items-center gap-2">
+                            <input 
+                                type="text" 
+                                placeholder="اسم اللون الجديد" 
+                                class="w-40 px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                data-testid="input-new-color"
+                            >
+                            <button type="button" class="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm" data-testid="button-add-color">
+                                <i class="fas fa-plus ml-2"></i>
+                                إضافة لون
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Color Overview Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-card border border-border rounded-lg p-4 text-center" data-mock="true">
+                            <div class="font-semibold text-lg mb-2">أسود</div>
+                            <div class="text-2xl font-bold text-primary mb-1">24</div>
+                            <div class="text-sm text-muted-foreground mb-2">قطعة إجمالي</div>
+                            <div class="text-xs text-muted-foreground">6 مقاس متوفر</div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4 text-center" data-mock="true">
+                            <div class="font-semibold text-lg mb-2">أبيض</div>
+                            <div class="text-2xl font-bold text-primary mb-1">18</div>
+                            <div class="text-sm text-muted-foreground mb-2">قطعة إجمالي</div>
+                            <div class="text-xs text-muted-foreground">5 مقاس متوفر</div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4 text-center" data-mock="true">
+                            <div class="font-semibold text-lg mb-2">أحمر</div>
+                            <div class="text-2xl font-bold text-primary mb-1">12</div>
+                            <div class="text-sm text-muted-foreground mb-2">قطعة إجمالي</div>
+                            <div class="text-xs text-muted-foreground">4 مقاس متوفر</div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4 text-center" data-mock="true">
+                            <div class="font-semibold text-lg mb-2">أزرق</div>
+                            <div class="text-2xl font-bold text-primary mb-1">15</div>
+                            <div class="text-sm text-muted-foreground mb-2">قطعة إجمالي</div>
+                            <div class="text-xs text-muted-foreground">7 مقاس متوفر</div>
+                        </div>
+                    </div>
+
+                    <!-- Color Tab Management -->
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" class="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm relative" data-testid="button-color-tab-أسود">
+                                أسود
+                                <button class="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-destructive-foreground rounded-full text-xs flex items-center justify-center">×</button>
+                            </button>
+                            <button type="button" class="px-4 py-2 bg-secondary text-secondary-foreground border border-border rounded-md text-sm relative" data-testid="button-color-tab-أبيض">
+                                أبيض
+                                <button class="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-destructive-foreground rounded-full text-xs flex items-center justify-center">×</button>
+                            </button>
+                        </div>
+
+                        <!-- Size Quantity Grid -->
+                        <!-- @COMPONENT: SizeQuantityGrid [Grid for managing sizes and quantities for selected color] -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h5 class="font-medium">إدارة المقاسات والكميات</h5>
+                                    <span class="text-sm text-muted-foreground">(أسود)</span>
+                                </div>
+                                <button type="button" class="px-4 py-2 bg-secondary text-secondary-foreground border border-border rounded-md text-sm" data-testid="button-add-size">
+                                    <i class="fas fa-plus ml-2"></i>
+                                    إضافة مقاس
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Size Card 1 -->
+                                <div class="border-2 border-green-200 bg-green-50/50 rounded-lg p-4 transition-all" data-mock="true">
+                                    <div class="text-center mb-4">
+                                        <input 
+                                            value="38" 
+                                            placeholder="مقاس 44" 
+                                            class="text-center text-lg font-semibold border-none bg-transparent w-full"
+                                            data-testid="input-size-0"
+                                        >
+                                    </div>
+
+                                    <div class="text-center mb-4">
+                                        <div class="text-3xl font-bold text-amber-600 mb-1">5</div>
+                                        <div class="text-sm text-muted-foreground">قطعة</div>
+                                    </div>
+
+                                    <div class="flex items-center justify-center mb-4">
+                                        <button type="button" class="px-3 py-1 bg-secondary border border-border rounded-r-md" data-testid="button-decrement-0">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input 
+                                            type="number" 
+                                            value="5" 
+                                            class="text-center border-l-0 border-r-0 border-t border-b border-border w-20 py-1"
+                                            data-testid="input-quantity-0"
+                                        >
+                                        <button type="button" class="px-3 py-1 bg-secondary border border-border rounded-l-md" data-testid="button-increment-0">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <button type="button" class="w-full px-4 py-2 bg-destructive text-destructive-foreground rounded-md text-sm" data-testid="button-availability-0">
+                                            <i class="fas fa-minus ml-2"></i>
+                                            نفد المخزون
+                                        </button>
+                                        
+                                        <div class="text-center">
+                                            <span class="text-sm text-green-600">متوفر</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Size Card 2 -->
+                                <div class="border-2 border-gray-200 bg-gray-50/50 rounded-lg p-4 transition-all" data-mock="true">
+                                    <div class="text-center mb-4">
+                                        <input 
+                                            value="40" 
+                                            placeholder="مقاس 44" 
+                                            class="text-center text-lg font-semibold border-none bg-transparent w-full"
+                                            data-testid="input-size-1"
+                                        >
+                                    </div>
+
+                                    <div class="text-center mb-4">
+                                        <div class="text-3xl font-bold text-amber-600 mb-1">0</div>
+                                        <div class="text-sm text-muted-foreground">قطعة</div>
+                                    </div>
+
+                                    <div class="flex items-center justify-center mb-4">
+                                        <button type="button" class="px-3 py-1 bg-secondary border border-border rounded-r-md" disabled data-testid="button-decrement-1">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input 
+                                            type="number" 
+                                            value="0" 
+                                            class="text-center border-l-0 border-r-0 border-t border-b border-border w-20 py-1"
+                                            data-testid="input-quantity-1"
+                                        >
+                                        <button type="button" class="px-3 py-1 bg-secondary border border-border rounded-l-md" data-testid="button-increment-1">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <button type="button" class="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm" data-testid="button-availability-1">
+                                            <i class="fas fa-plus ml-2"></i>
+                                            بيع قطعة
+                                        </button>
+                                        
+                                        <div class="text-center">
+                                            <span class="text-sm text-orange-500">مخزون منتهي!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: SizeQuantityGrid -->
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ColorSizeManager -->
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6 border-t border-border">
+                    <button type="button" class="px-6 py-2 bg-secondary text-secondary-foreground border border-border rounded-md" data-testid="button-cancel">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-primary-foreground rounded-md" data-testid="button-save-product">
+                        حفظ المنتج
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AddProductModal -->
+
+    <!-- Modal: New Sale -->
+    <!-- @COMPONENT: SaleForm [Modal for processing new sales with inventory checking] -->
+    <div id="saleModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-card rounded-lg border border-border shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-auto">
+            <div class="p-6 border-b border-border">
+                <h3 class="text-xl font-bold">تسجيل بيع جديد</h3>
+            </div>
+            
+            <form class="p-6 space-y-6">
+                <!-- Sale Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">قناة البيع <span class="text-destructive">*</span></label>
+                        <select class="w-full px-4 py-2 border border-input rounded-md bg-background" data-testid="select-sales-channel">
+                            <option value="">اختر قناة البيع</option>
+                            <option value="in-store">في المتجر</option>
+                            <option value="online">أونلاين</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">طريقة الدفع <span class="text-destructive">*</span></label>
+                        <select class="w-full px-4 py-2 border border-input rounded-md bg-background" data-testid="select-payment-method">
+                            <option value="">اختر طريقة الدفع</option>
+                            <option value="cash">نقدي</option>
+                            <option value="visa">فيزا (+5% رسوم)</option>
+                            <option value="bank-transfer">حوالة بنكية</option>
+                            <option value="cash-on-delivery">الدفع عند الاستلام</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sale Items -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-medium">عناصر البيع</h4>
+                        <button type="button" class="px-4 py-2 bg-primary text-primary-foreground rounded-md" data-testid="button-add-item">
+                            <i class="fas fa-plus ml-2"></i>
+                            إضافة عنصر
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Sale Item 1 -->
+                        <div class="border border-border rounded-lg p-4" data-mock="true">
+                            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">المنتج</label>
+                                    <select class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm" data-testid="select-product-0">
+                                        <option value="">اختر المنتج</option>
+                                        <option value="1">DRS-001 - أزياء العصر</option>
+                                        <option value="2">HJB-205 - حجاب الأناقة</option>
+                                        <option value="3">ABY-150 - عباية الفخامة</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">اللون</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="مثال: أسود، أبيض، أحمر" 
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-color-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">المقاس</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="مثال: 38، 40، L، XL" 
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-size-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">الكمية</label>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        value="1" 
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-quantity-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">سعر الوحدة</label>
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        value="450.00" 
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-unit-price-0"
+                                    >
+                                </div>
+                                
+                                <div class="flex items-end">
+                                    <button type="button" class="px-3 py-2 bg-destructive text-destructive-foreground rounded-md text-sm" data-testid="button-remove-item-0">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Available Inventory Display -->
+                            <!-- @COMPONENT: AvailableInventory [Shows available colors/sizes for selected product] -->
+                            <div class="border border-border rounded-lg p-4 bg-muted/20">
+                                <h5 class="font-medium text-sm mb-4">المخزون المتوفر:</h5>
+                                
+                                <!-- Available Colors -->
+                                <div class="mb-4">
+                                    <label class="text-xs text-muted-foreground mb-2 block">الألوان المتوفرة:</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-primary text-primary-foreground border-primary border" data-testid="button-select-color-أسود">
+                                            أسود (24)
+                                        </button>
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-background border-border border hover:bg-muted" data-testid="button-select-color-أبيض">
+                                            أبيض (18)
+                                        </button>
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-background border-border border hover:bg-muted" data-testid="button-select-color-أحمر">
+                                            أحمر (12)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Available Sizes for Selected Color -->
+                                <div class="mb-4">
+                                    <label class="text-xs text-muted-foreground mb-2 block">المقاسات المتوفرة لـ أسود:</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-primary text-primary-foreground border-primary border" data-testid="button-select-size-38">
+                                            38 (5)
+                                        </button>
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-background border-border border hover:bg-muted" data-testid="button-select-size-40">
+                                            40 (7)
+                                        </button>
+                                        <button type="button" class="px-3 py-1 rounded-full text-xs bg-background border-border border hover:bg-muted" data-testid="button-select-size-42">
+                                            42 (3)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Quantity Info -->
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="text-xs text-muted-foreground">الكمية المتوفرة:</span>
+                                    <span class="px-2 py-1 bg-accent text-accent-foreground rounded-full text-xs">5 قطعة</span>
+                                </div>
+
+                                <!-- Summary -->
+                                <div class="text-xs text-muted-foreground">
+                                    إجمالي: 3 لون، 6 مقاس متوفر
+                                </div>
+                            </div>
+                            <!-- @END_COMPONENT: AvailableInventory -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="bg-muted/30 rounded-lg p-4" data-mock="true">
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>المجموع الفرعي:</span>
+                            <span data-testid="text-subtotal">450.00 درهم</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>رسوم فيزا (5%):</span>
+                            <span data-testid="text-fees">22.50 درهم</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-lg">
+                            <span>المجموع الإجمالي:</span>
+                            <span data-testid="text-total">472.50 درهم</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6 border-t border-border">
+                    <button type="button" class="px-6 py-2 bg-secondary text-secondary-foreground border border-border rounded-md" data-testid="button-cancel">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-primary-foreground rounded-md" data-testid="button-save-sale">
+                        تسجيل البيع
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: SaleForm -->
+
+    <!-- Modal: Return Form -->
+    <!-- @COMPONENT: ReturnForm [Modal for processing product returns] -->
+    <div id="returnModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-card rounded-lg border border-border shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-auto">
+            <div class="p-6 border-b border-border">
+                <h3 class="text-xl font-bold">تسجيل مرتجع</h3>
+            </div>
+            
+            <form class="p-6 space-y-6">
+                <!-- Return Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">الفاتورة الأصلية <span class="text-destructive">*</span></label>
+                        <select class="w-full px-4 py-2 border border-input rounded-md bg-background" data-testid="select-original-sale">
+                            <option value="">اختر الفاتورة الأصلية</option>
+                            <option value="1">INV-2024-001 - 450.00 درهم</option>
+                            <option value="2">INV-2024-002 - 320.00 درهم</option>
+                            <option value="3">INV-2024-003 - 85.00 درهم</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">نوع المرتجع <span class="text-destructive">*</span></label>
+                        <select class="w-full px-4 py-2 border border-input rounded-md bg-background" data-testid="select-return-type">
+                            <option value="">اختر نوع المرتجع</option>
+                            <option value="refund">استرداد</option>
+                            <option value="exchange">استبدال</option>
+                        </select>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-2">مبلغ الاسترداد (درهم) <span class="text-destructive">*</span></label>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            placeholder="0.00" 
+                            value="450.00"
+                            class="w-full px-4 py-2 border border-input rounded-md bg-background"
+                            data-testid="input-refund-amount"
+                        >
+                    </div>
+                </div>
+
+                <!-- Return Items -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-medium">عناصر المرتجع</h4>
+                        <button type="button" class="px-4 py-2 bg-primary text-primary-foreground rounded-md" data-testid="button-add-return-item">
+                            <i class="fas fa-plus ml-2"></i>
+                            إضافة عنصر
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Return Item 1 -->
+                        <div class="border border-border rounded-lg p-4" data-mock="true">
+                            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">المنتج ID</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="معرف المنتج" 
+                                        value="DRS-001"
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-product-id-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">اللون</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="مثال: أسود، أبيض، أحمر" 
+                                        value="أسود"
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-return-color-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">المقاس</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="مثال: 38، 40، L، XL" 
+                                        value="38"
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-return-size-0"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">الكمية</label>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        value="1" 
+                                        class="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                                        data-testid="input-return-quantity-0"
+                                    >
+                                </div>
+                                
+                                <div class="flex items-end">
+                                    <button type="button" class="px-3 py-2 bg-destructive text-destructive-foreground rounded-md text-sm" data-testid="button-remove-return-item-0">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6 border-t border-border">
+                    <button type="button" class="px-6 py-2 bg-secondary text-secondary-foreground border border-border rounded-md" data-testid="button-cancel-return">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-primary-foreground rounded-md" data-testid="button-save-return">
+                        تسجيل المرتجع
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ReturnForm -->
+
+    <script>
+        // Simple modal management - for mockup demonstration only
+        // TODO: Replace with proper React state management in actual implementation
+        (function() {
+            const modals = {
+                product: document.getElementById('addProductModal'),
+                sale: document.getElementById('saleModal'),
+                return: document.getElementById('returnModal')
+            };
+
+            // Quick action buttons
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const text = target.textContent.trim();
+                
+                if (text.includes('إضافة منتج جديد')) {
+                    showModal('product');
+                } else if (text.includes('تسجيل بيع جديد')) {
+                    showModal('sale');
+                } else if (text.includes('تسجيل مرتجع')) {
+                    showModal('return');
+                } else if (text.includes('إلغاء') || target.textContent === '×') {
+                    hideAllModals();
+                }
+            });
+
+            // Modal backdrop clicks
+            Object.values(modals).forEach(modal => {
+                if (modal) {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            hideAllModals();
+                        }
+                    });
+                }
+            });
+
+            function showModal(type) {
+                hideAllModals();
+                if (modals[type]) {
+                    modals[type].classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function hideAllModals() {
+                Object.values(modals).forEach(modal => {
+                    if (modal) {
+                        modal.classList.add('hidden');
+                    }
+                });
+                document.body.style.overflow = 'auto';
+            }
+
+            // Form submission handlers (mockup only)
+            document.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulate form processing
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                if (submitButton) {
+                    const originalText = submitButton.textContent;
+                    submitButton.textContent = 'جاري الحفظ...';
+                    submitButton.disabled = true;
+                    
+                    setTimeout(() => {
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                        hideAllModals();
+                        
+                        // Show success message (mockup)
+                        const successMsg = document.createElement('div');
+                        successMsg.className = 'fixed top-4 right-4 bg-accent text-accent-foreground px-6 py-3 rounded-lg shadow-lg z-50';
+                        successMsg.innerHTML = '<i class="fas fa-check-circle ml-2"></i>تم الحفظ بنجاح';
+                        document.body.appendChild(successMsg);
+                        
+                        setTimeout(() => successMsg.remove(), 3000);
+                    }, 2000);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
